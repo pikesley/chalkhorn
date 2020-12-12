@@ -49,3 +49,17 @@ class TestTarget(TestCase):
         target = Target("target-a: target-b target-c ## help for target-a")
         self.assertEqual(target.name, "target-a")
         self.assertEqual(target.help, "help for target-a")
+
+    def test_with_categories(self):
+        """Test it parses help with a @category."""
+        target = Target(
+            "target-x:  ## @category-z this is the help for target-x"
+        )
+        self.assertEqual(target.name, "target-x")
+        self.assertEqual(target.help, "this is the help for target-x")
+        self.assertEqual(target.category, "category-z")
+
+        target = Target("target-a: target-b target-c ## @foo some help text")
+        self.assertEqual(target.name, "target-a")
+        self.assertEqual(target.help, "some help text")
+        self.assertEqual(target.category, "foo")

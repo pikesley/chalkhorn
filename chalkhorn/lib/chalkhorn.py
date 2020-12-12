@@ -17,6 +17,7 @@ class Target:
         """Construct."""
         self.parts = content.split(":")
         self.name = self.parts[0]
+        self.category = None
 
     @property
     def help(self):
@@ -24,6 +25,11 @@ class Target:
         parts = self.parts[1].split("##")
 
         if len(parts) > 1:
-            return parts[1].strip()
+            help_words = parts[1].strip().split(" ")
+            if help_words[0].startswith("@"):
+                self.category = help_words[0][1:]
+                help_words = help_words[1:]
+
+            return " ".join(help_words)
 
         return None
