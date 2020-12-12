@@ -1,0 +1,9 @@
+isort
+mock
+pylama
+pylama-pylint
+pytest
+pytest-cov
+pytest-random-order
+black
+ipdb
