@@ -39,6 +39,9 @@ class Chalkhorn:
             if target.has_help:
                 helped.append(target)
 
+        if not helped:
+            return ""
+
         column_width = find_longest(list(map(lambda x: x.name, helped))) + SPACER
         helped[0].is_default = True
 

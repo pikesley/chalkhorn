@@ -78,6 +78,11 @@ class TestChalkhorn(TestCase):
             "4ef8c4522fdf4ee09053464a4bc9c682",
         )
 
+    def test_not_printing(self):
+        """Test it behaves well with no help defined."""
+        chalk = Chalkhorn(["tests/fixtures/Makefile.no-help"])
+        self.assertEqual(str(chalk), "")
+
 
 def test_find_longest():
     """Test it can find the longest string."""
