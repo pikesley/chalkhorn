@@ -1,0 +1,31 @@
+all: style test clean  ## run style, test, clean
+
+style: format  ## @lint run the lint checks
+	python -m pylama
+
+test:  ## @tests run the tests
+	python -m pytest \
+		--random-order \
+		--cov \
+		--verbose \
+		--capture no \
+		--exitfirst \
+		--last-failed
+
+install:
+	python -m pip install --upgrade pip
+	python -m pip install -r requirements-frozen.txt
+
+clean:  ## clean up the cruft
+	@find . -depth -name __pycache__ -exec rm -fr {} \;
+	@find . -depth -name .pytest_cache -exec rm -fr {} \;
+	@find . -depth -name .coverage -exec rm -fr {} \;
+	@find . -name .DS_Store -delete
+
+format: isort black  ## @lint format the code
+
+isort:
+	python -m isort .
+
+black:
+	python -m black --line-length 80 .

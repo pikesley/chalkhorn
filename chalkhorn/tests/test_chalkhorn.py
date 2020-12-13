@@ -24,6 +24,43 @@ class TestChalkhorn(TestCase):
             ],
         )
 
+    def test_target_picking(self):
+        """Test it can extract the targets from a Makefile."""
+        chalk = Chalkhorn("tests/fixtures/Makefile.no-help")
+        self.assertEqual(
+            list(map(lambda x: x.name, chalk.targets)),
+            [
+                "all",
+                "style",
+                "test",
+                "install",
+                "clean",
+                "format",
+                "isort",
+                "black",
+            ],
+        )
+        self.assertFalse(chalk.has_categories)
+
+        chalk = Chalkhorn("tests/fixtures/Makefile.with-help")
+        self.assertEqual(
+            list(map(lambda x: x.help, chalk.targets)),
+            [
+                "run style, test, clean",
+                "run the lint checks",
+                "run the tests",
+                None,
+                "clean up the cruft",
+                "format the code",
+                None,
+                None,
+            ],
+        )
+        self.assertFalse(chalk.has_categories)
+
+        chalk = Chalkhorn("tests/fixtures/Makefile.with-categorised-help")
+        self.assertTrue(chalk.has_categories)
+
 
 class TestTarget(TestCase):
     """Test the Target parser."""
