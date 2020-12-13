@@ -14,7 +14,7 @@ test:
 
 install:
 	python -m pip install --upgrade pip
-	python -m pip install -r requirements-frozen.txt
+	python -m pip install -r requirements.txt
 
 clean:
 	@find . -depth -name __pycache__ -exec rm -fr {} \;
@@ -28,4 +28,4 @@ isort:
 	python -m isort .
 
 black:
-	python -m black --line-length 80 .
+	python -m black .

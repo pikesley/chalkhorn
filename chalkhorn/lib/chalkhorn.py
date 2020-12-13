@@ -1,13 +1,17 @@
 import re
 from pathlib import Path
 
+from termcolor import colored as coloured
+
+COLOURS = {"target": "cyan", "help": "green", "default": "magenta"}
+
 
 class Chalkhorn:
     """Wrangle some Makefile help."""
 
     def __init__(self, filenames):
         """Construct."""
-        self.filenames = filenames.split(" ")
+        self.filenames = filenames
         self.makefiles = list(map(Path, self.filenames))
         self.targets = []
 
@@ -20,6 +24,36 @@ class Chalkhorn:
 
         self.has_categories = any(list(map(lambda x: x.category, self.targets)))
 
+    def __str__(self):
+        """Display ourself as a string."""
+        helped = []
+        for target in self.targets:
+            if target.has_help:
+                helped.append(target)
+
+        is_first = True
+        display = ""
+        column_width = find_longest(list(map(lambda x: x.name, helped))) + 16
+        for target in helped:
+            display += f"{coloured(target.name, COLOURS['target']):{column_width}}"
+            display += f"{coloured(target.help, COLOURS['help'])}"
+            if is_first:
+                display += f" {coloured('(default)', COLOURS['default'])}"
+                is_first = False
+            display += "\n"
+
+        return display
+
+
+def find_longest(strings):
+    """Find the longest string in a list."""
+    longest = 0
+    for string in strings:
+        if len(string) > longest:
+            longest = len(string)
+
+    return longest
+
 
 class Target:
     """Parse a `make` target."""
@@ -31,6 +65,11 @@ class Target:
         self.help = None
         self.category = None
         self.parse_line()
+
+    @property
+    def has_help(self):
+        """Do we have `help`."""
+        return self.help
 
     def parse_line(self):
         """Parse the text beyond the `target` name."""

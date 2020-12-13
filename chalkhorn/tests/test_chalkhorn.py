@@ -1,7 +1,8 @@
+from hashlib import md5
 from pathlib import PosixPath
 from unittest import TestCase
 
-from lib.chalkhorn import Chalkhorn, Target
+from lib.chalkhorn import Chalkhorn, Target, find_longest
 
 
 class TestChalkhorn(TestCase):
@@ -10,7 +11,7 @@ class TestChalkhorn(TestCase):
     def test_constructor(self):
         """Test it gets the right data."""
         chalk = Chalkhorn(
-            "tests/fixtures/Makefile.foo tests/fixtures/Makefile.bar"
+            ["tests/fixtures/Makefile.foo", "tests/fixtures/Makefile.bar"]
         )
         self.assertEqual(
             chalk.filenames,
@@ -26,7 +27,7 @@ class TestChalkhorn(TestCase):
 
     def test_target_picking(self):
         """Test it can extract the targets from a Makefile."""
-        chalk = Chalkhorn("tests/fixtures/Makefile.no-help")
+        chalk = Chalkhorn(["tests/fixtures/Makefile.no-help"])
         self.assertEqual(
             list(map(lambda x: x.name, chalk.targets)),
             [
@@ -42,7 +43,7 @@ class TestChalkhorn(TestCase):
         )
         self.assertFalse(chalk.has_categories)
 
-        chalk = Chalkhorn("tests/fixtures/Makefile.with-help")
+        chalk = Chalkhorn(["tests/fixtures/Makefile.with-help"])
         self.assertEqual(
             list(map(lambda x: x.help, chalk.targets)),
             [
@@ -58,8 +59,22 @@ class TestChalkhorn(TestCase):
         )
         self.assertFalse(chalk.has_categories)
 
-        chalk = Chalkhorn("tests/fixtures/Makefile.with-categorised-help")
+        chalk = Chalkhorn(["tests/fixtures/Makefile.with-categorised-help"])
         self.assertTrue(chalk.has_categories)
+
+    def test_printing(self):
+        """Test it prints itself."""
+        chalk = Chalkhorn(["tests/fixtures/Makefile.with-help"])
+        self.assertEqual(
+            md5(str(chalk).encode("utf-8")).hexdigest(),
+            "ed1aa9f96706f76ca42321fb917f78db",
+        )
+
+
+def test_find_longest():
+    """Test it can find the longest string."""
+    strings = ["tiny", "short", "longest", "little"]
+    assert find_longest(strings) == 7
 
 
 class TestTarget(TestCase):
@@ -89,9 +104,7 @@ class TestTarget(TestCase):
 
     def test_with_categories(self):
         """Test it parses help with a @category."""
-        target = Target(
-            "target-x:  ## @category-z this is the help for target-x"
-        )
+        target = Target("target-x:  ## @category-z this is the help for target-x")
         self.assertEqual(target.name, "target-x")
         self.assertEqual(target.help, "this is the help for target-x")
         self.assertEqual(target.category, "category-z")
