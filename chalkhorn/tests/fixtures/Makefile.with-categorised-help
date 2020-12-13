@@ -24,8 +24,8 @@ clean:  ## clean up the cruft
 
 format: isort black  ## @lint format the code
 
-isort:
+isort:  ## @lint
 	python -m isort .
 
-black:
+black:  ## @lint run `black`
 	python -m black --line-length 80 .

@@ -70,6 +70,14 @@ class TestChalkhorn(TestCase):
             "ed1aa9f96706f76ca42321fb917f78db",
         )
 
+    def test_printing_with_categories(self):
+        """Test it formats itself with categories."""
+        chalk = Chalkhorn(["tests/fixtures/Makefile.with-categorised-help"])
+        self.assertEqual(
+            md5(str(chalk).encode("utf-8")).hexdigest(),
+            "4ef8c4522fdf4ee09053464a4bc9c682",
+        )
+
 
 def test_find_longest():
     """Test it can find the longest string."""
